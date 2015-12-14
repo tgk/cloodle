@@ -27,3 +27,20 @@
 (om/add-root!
  reconciler
  Counter (gdom/getElement "app"))
+
+
+(defn read
+  [{:keys [state] as :env} key params]
+  (let [st @state]
+    (if-let [[_ v] (find st key)]
+      {:value v}
+      {:value :not-found})))
+
+(defn mutate
+  [{:keys [state] :as env} key params]
+  (if (= 'increment key)
+    {:value {:keys [:count]}
+     :action #(swap! state update-in [:count] inc)}
+    {:value :not-found}))
+
+(def my-parser (om/parser {:read read :mutate mutate}))

@@ -7,28 +7,6 @@
 
 (def app-state (atom {:count 0}))
 
-(defui Counter
-  Object
-  (render
-   [this]
-   (let [{:keys [count]} (om/props this)]
-     (dom/div
-      nil
-      (dom/span nil (str "Count: " count))
-      (dom/button
-       #js {:onClick
-            (fn [e]
-              (swap! app-state update-in [:count] inc))}
-       "Click me!")))))
-
-(def reconciler
-  (om/reconciler {:state app-state}))
-
-(om/add-root!
- reconciler
- Counter (gdom/getElement "app"))
-
-
 (defn read
   [{:keys [state] as :env} key params]
   (let [st @state]
@@ -43,4 +21,29 @@
      :action #(swap! state update-in [:count] inc)}
     {:value :not-found}))
 
-(def my-parser (om/parser {:read read :mutate mutate}))
+(defui Counter
+  static om/IQuery
+  (query
+   [this]
+   [:count])
+  Object
+  (render
+   [this]
+   (let [{:keys [count]} (om/props this)]
+     (dom/div
+      nil
+      (dom/span nil (str "Count: " count))
+      (dom/button
+       #js {:onClick
+            (fn [e]
+              (om/transact! this '[(increment)]))}
+       "Click me!")))))
+
+(def reconciler
+  (om/reconciler
+   {:state app-state
+    :parser (om/parser {:read read :mutate mutate})}))
+
+(om/add-root!
+ reconciler
+ Counter (gdom/getElement "app"))

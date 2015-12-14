@@ -5,4 +5,14 @@
 
 (enable-console-print!)
 
-(println "Hello world 2!")
+(defui HelloWorld
+  Object
+  (render
+   [this]
+   (dom/div nil (get (om/props this) :title))))
+
+(def hello (om/factory HelloWorld))
+
+(js/ReactDOM.render
+ (hello {:title "Hello, World 2!"})
+ (gdom/getElement "app"))

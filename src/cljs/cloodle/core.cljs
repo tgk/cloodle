@@ -14,5 +14,7 @@
 (def hello (om/factory HelloWorld))
 
 (js/ReactDOM.render
- (hello {:title "Hello, World 2!"})
- (gdom/getElement "app"))
+  (apply dom/div nil
+    (map #(hello {:title (str "Hello " %)})
+      (range 30)))
+  (gdom/getElement "app"))

@@ -3,6 +3,6 @@
             [om.next :as om :refer-macros [defui]]
             [om.dom :as dom]))
 
-#_(enable-console-print!)
+(enable-console-print!)
 
-(.log js/console "Hello world!")
+(println "Hello world!")
